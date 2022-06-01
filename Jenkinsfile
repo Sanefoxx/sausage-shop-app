@@ -29,6 +29,7 @@ pipeline {
         stage('Build frontend') {
             steps {
                 dir("frontend") {
+                    sh 'npm install karma@6.3.20' // обновляем версию кармы
                     sh 'npm install' // Для фронта сначала загрузим все сторонние зависимости
                     sh 'npm run build' // Запустим сборку
                 }
