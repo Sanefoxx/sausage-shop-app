@@ -42,5 +42,12 @@ pipeline {
                 archiveArtifacts(artifacts: 'frontend/dist/frontend/*')
             }
         }
+
+        post {
+            success {
+                sh "curl -X POST -H 'Content-type: application/json' --data '{"text": "Александр Лисицин собрал приложение."}' https://hooks.slack.com/services/TPV9DP0N4/B03HQMG3NH3/4wwHto9i0Msfrp$
+            }
+        }
     }
 } 
+
