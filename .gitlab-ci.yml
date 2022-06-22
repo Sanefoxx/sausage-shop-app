@@ -18,14 +18,14 @@ build-code-job: # задача с именем build-code-job
     - npm install # загрузка всех сторонних зависимостей
     - npm run build # запуск сборки кода
     - cd ..
-    - mkdir sausage-store-0.0.2  # создание директории, в которую копируются артефакты. Это нужно для организации удобной структуры архива
-    - mv backend/target/sausage-store-0.0.2-SNAPSHOT.jar sausage-store-0.0.2/sausage-store-0.0.2.jar # копирование собранного бэкенда
-    - mv frontend/dist/frontend sausage-store-0.0.2/public_html # копирование собранного фронтэнда
+    - mkdir sausage-store-0.0.1  # создание директории, в которую копируются артефакты. Это нужно для организации удобной структуры архива
+    - mv backend/target/sausage-store-0.0.1-SNAPSHOT.jar sausage-store-0.0.1/sausage-store-0.0.1.jar # копирование собранного бэкенда
+    - mv frontend/dist/frontend sausage-store-0.0.1/public_html # копирование собранного фронтэнда
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
-      - sausage-store-0.0.2/public_html  # сохранение собранного фронтэнда как артефакт
-      - sausage-store-0.0.2/sausage-store-0.0.2.jar # сохранение собранного бэкенда как артефакт
+      - sausage-store-0.0.1/public_html  # сохранение собранного фронтэнда как артефакт
+      - sausage-store-0.0.1/sausage-store-0.0.1.jar # сохранение собранного бэкенда как артефакт
     reports:
       dotenv: CI_JOB_ID.txt # сохранение файла с переменными как артефакт
 
@@ -34,7 +34,7 @@ spotbugs-sast:
   needs:
     - build-code-job
   before_script:
-    - cp sausage-store-0.0.2/sausage-store-0.0.2.jar backend/sausage-store-0.0.2.jar
+    - cp sausage-store-0.0.1/sausage-store-0.0.1.jar backend/sausage-store-0.0.1.jar
   variables:
     COMPILE: "false"
     SAST_JAVA_VERSION: 11
@@ -76,12 +76,12 @@ upload-release: # задача с именем upload-release
   #   - frontend//*
   script:
     - echo "Get artifact from job ${ARTIFACT_JOB_ID}"
-    - > # скачивание артефакта в файл sausage-store-0.0.2.zip
-      curl --location --output sausage-store-0.0.2.zip -H "PRIVATE-TOKEN: ${MY_TOKEN}"
+    - > # скачивание артефакта в файл sausage-store-0.0.1.zip
+      curl --location --output sausage-store-0.0.1.zip -H "PRIVATE-TOKEN: ${MY_TOKEN}"
       "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/jobs/${ARTIFACT_JOB_ID}/artifacts"
     - > # сохранение артефакта в package registry
       curl -sSL -H "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      -T sausage-store-0.0.2.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/sausage-store/${CI_COMMIT_SHA}/"
+      -T sausage-store-0.0.1.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/sausage-store/${CI_COMMIT_SHA}/"
 
 send-notification:
   stage: notify
