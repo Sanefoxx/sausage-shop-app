@@ -1,0 +1,13 @@
+[Unit]
+Description=Sausage-store-frontend
+
+[Service]
+WorkingDirectory=/var/www-data
+ExecStart=http-server ./dist/frontend/ -p 1561 --proxy http://localhost:8080
+User=front-user
+Restart=always
+StandardOutput=append:/logs/logs/out-front.log
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
