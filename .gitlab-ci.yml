@@ -1,98 +1,22 @@
 stages:
-  - build
-  - test
-  - release
-  - notify
+  - module-pipelines
 
-include:
-  - template: Security/SAST.gitlab-ci.yml
-  
-variables:
-  VERSION: 1.0.${CI_PIPELINE_ID}
+frontend:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/frontend/.gitlab-ci.yml"
+    strategy: depend # depend нужен, если какой-нибудь дочерний пайплайн свалился, мы знали, что общий пайплайн тоже идёт с ошибкой
+  only:
+    changes: # как только происходит изменение в папке frontend, запускается дочерний пайплайн, который лежит в этой папке
+      - frontend/**/*
 
-build-code-job: # задача с именем build-code-job
-  stage: build   # этап build
-  script: # объявление скрипта
-    - echo "ARTIFACT_JOB_ID=${CI_JOB_ID}" > CI_JOB_ID.txt  # сохранение номера задачи в файл, чтобы в дальнейшем использовать для копирования артефакта
-    - cd backend
-    - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION} # запуск сборки кода
-    - cd ../frontend
-    - npm install karma@6.3.20
-    - npm install # загрузка всех сторонних зависимостей
-    - npm run build # запуск сборки кода
-    - cd ..
-    - mkdir sausage-store-${VERSION}  # создание директории, в которую копируются артефакты. Это нужно для организации удобной структуры архива
-    - mv backend/target/sausage-store-${VERSION}.jar sausage-store-${VERSION}/sausage-store-${VERSION}.jar # копирование собранного бэкенда
-    - mv frontend/dist/frontend sausage-store-${VERSION}/public_html # копирование собранного фронтэнда
-  artifacts:
-    paths:
-      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
-      - sausage-store-${VERSION}/public_html  # сохранение собранного фронтэнда как артефакт
-      - sausage-store-${VERSION}/sausage-store-${VERSION}.jar # сохранение собранного бэкенда как артефакт
-    reports:
-      dotenv: CI_JOB_ID.txt # сохранение файла с переменными как артефакт
-
-spotbugs-sast:
-  stage: test
-  needs:
-    - build-code-job
-  before_script:
-    - cp sausage-store-${VERSION}/sausage-store-${VERSION}.jar backend/sausage-store-${VERSION}.jar
-  variables:
-    COMPILE: "false"
-    SAST_JAVA_VERSION: 11
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
-  artifacts:
-    reports:
-      sast: gl-sast-report.json
-
-sonarqube-backend-sast:
-  stage: test
-  image: maven:3.8-openjdk-16 # тот самый docker-образ, о котором мы все узнаем в будущем
-  script:
-    - cd backend
-    - >
-      mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-      -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACKEND}
-      -Dsonar.projectName=${SONAR_PROJECT_NAME_BACKEND}
-      -Dsonar.host.url=${SONARQUBE_URL}
-      -Dsonar.login=${SONAR_LOGIN}
-
-sonarqube-frontend-sast:
-  stage: test
-  image: sonarsource/sonar-scanner-cli:4.7
-  script:
-    - cd frontend
-    - >
-      sonar-scanner -Dsonar.qualitygate.wait=true
-      -Dsonar.projectKey=${SONAR_PROJECT_KEY_FRONTEND}
-      -Dsonar.projectName=${SONAR_PROJECT_NAME_FRONTEND}
-      -Dsonar.sources=.
-      -Dsonar.host.url=${SONARQUBE_URL}
-      -Dsonar.login=${SONAR_LOGIN}
-
-upload-backend-release: # задача с именем upload-release
-  stage: release # этап release
-#  only:
-#    changes:
-#      - backend//*
-  script:
-    - cd backend
-    - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -s settings.xml -Dversion.application=${VERSION} -DskipTests deploy
-
-upload-frontend-release:
-  stage: release # этап release
-#  only:
-#    changes:
-#      - frontend//*
-  script:
-    - tar czvf sausage-store-${VERSION}.tar.gz sausage-store-${VERSION}/public_html
-    - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL_FRONTEND}/sausage-store-front/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz
-
-send-notification:
-  stage: notify
-  script:
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"text\": \"Вышла новая версия сосисочной — \'${VERSION}\'.
-       Скачать backend можно по ссылке — <\'${NEXUS_REPO_URL_BACKEND}\'com/yandex/practicum/devops/sausage-store/\'${VERSION}\'/sausage-store-\'${VERSION}\'.jar|Link to backend> .
-       Скачать frontend можно по ссылке — <\'${NEXUS_REPO_URL_FRONTEND}\'sausage-store-front/sausage-store/\'${VERSION}\'/sausage-store-\'${VERSION}\'.tar.gz|Link to frontend> .\"}'
-       https://hooks.slack.com/services/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"
+backend:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/backend/.gitlab-ci.yml"
+    strategy: depend
+  only:
+    changes:  # как только происходит изменение в папке backend, запускается дочерний пайплайн, который лежит в этой папке
+      - backend/**/*
