@@ -16,7 +16,7 @@ stages:
   - build
   - test
   - release
-  - deploy
+  - deploy-production
   - notify
 
 build-backend-job: # задача с именем build-code-job
@@ -59,9 +59,11 @@ upload-backend-release:
     - changes:
         - backend/*
 
-deploy-backend:
-  stage: deploy
+deploy-backend-prod:
+  stage: deploy-production
   when: manual
+  environment:
+    name: backend-prod/$CI_COMMIT_REF_SLUG
   before_script:
     #устанавливаем ssh-agent для удобства аутентификации по ssh
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
