@@ -14,6 +14,7 @@ public class ReportGeneratorTask {
 
     @Scheduled(fixedDelay = 60000)
     public void generate() {
+        //test
         logger.info("Generate report");
         reporter.info("VERY IMPORTANT REPORT START");
         reporter.info("___________________________");
