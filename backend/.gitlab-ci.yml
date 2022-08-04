@@ -55,6 +55,7 @@ upload-backend-release:
   allow_failure: true
   script:
     - cd backend
+    - ls
     - mvn deploy -DskipTests -Dversion.application=${VERSION} -Dmaven.repo.local=${MAVEN_REPO_PATH} -s settings.xml
   rules:
     - changes:
