@@ -52,6 +52,7 @@ sonarqube-backend-sast:
 
 upload-backend-release:
   stage: release
+  allow_failure: true
   script:
     - cd backend
     - mvn deploy -DskipTests -Dversion.application=${VERSION} -Dmaven.repo.local=${MAVEN_REPO_PATH} -s settings.xml
