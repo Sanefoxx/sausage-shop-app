@@ -84,6 +84,16 @@ deploy-backend-prod:
        export "NEXUS_REPO_URL=${NEXUS_REPO_URL_BACKEND}";
        export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
        export 'NEXUS_REPO_PASS=${NEXUS_REPO_PASS}';
+       export "PSQL_USER=${PSQL_USER}";
+       export "PSQL_PASSWORD=${PSQL_PASSWORD}";
+       export "PSQL_HOST=${PSQL_HOST}";
+       export "PSQL_PORT=${PSQL_PORT}";
+       export "PSQL_DBNAME=${PSQL_DBNAME}";
+       export "PSQL_ADMIN=${PSQL_ADMIN}";
+       export "MONGO_HOST=${MONGO_HOST}";
+       export "MONGO_USER=${MONGO_USER}"
+       export "MONGO_PASSWORD=${MONGO_PASSWORD}";
+       export "MONGO_DATABASE=${MONGO_DATABASE}"
        setsid /bin/bash -s " < ./backend/deploy.sh
 
 send-notification:
