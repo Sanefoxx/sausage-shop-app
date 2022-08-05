@@ -24,9 +24,9 @@ build-backend-job: # задача с именем build-code-job
   script:
     - cd backend
     - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION} # запуск сборки кода
-  rules: # rules и only в данных случаях взаимозаменяемы
-    - changes:
-        - backend/*
+#  rules: # rules и only в данных случаях взаимозаменяемы
+#    - changes:
+#        - backend/*
 
 spotbugs-sast:
   stage: test
@@ -56,9 +56,9 @@ upload-backend-release:
   script:
     - cd backend
     - mvn deploy -DskipTests -Dversion.application=${VERSION} -Dmaven.repo.local=${MAVEN_REPO_PATH} -s settings.xml
-  rules:
-    - changes:
-        - backend/*
+#  rules:
+#    - changes:
+#        - backend/*
 
 deploy-backend-prod:
   stage: deploy-production
@@ -84,6 +84,16 @@ deploy-backend-prod:
        export "NEXUS_REPO_URL=${NEXUS_REPO_URL_BACKEND}";
        export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
        export 'NEXUS_REPO_PASS=${NEXUS_REPO_PASS}';
+       export "PSQL_USER=${PSQL_USER}";
+       export "PSQL_PASSWORD=${PSQL_PASSWORD}";
+       export "PSQL_HOST=${PSQL_HOST}";
+       export "PSQL_PORT=${PSQL_PORT}";
+       export "PSQL_DBNAME=${PSQL_DBNAME}";
+       export "PSQL_ADMIN=${PSQL_ADMIN}";
+       export "MONGO_HOST=${MONGO_HOST}";
+       export "MONGO_USER=${MONGO_USER}";
+       export "MONGO_PASSWORD=${MONGO_PASSWORD}";
+       export "MONGO_DATABASE=${MONGO_DATABASE}";
        setsid /bin/bash -s " < ./backend/deploy.sh
 
 send-notification:

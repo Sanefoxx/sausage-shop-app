@@ -1,6 +1,9 @@
 #! /bin/bash
 #Если свалится одна из команд, рухнет и весь скрипт
 set -xe
+#Запишем креды в файл для юнит сервиса
+sudo sh -c "printf "PSQL_USER=$PSQL_USER'\\n'PSQL_PASSWORD=$PSQL_PASSWORD'\\n'PSQL_HOST=$PSQL_HOST'\\n'PSQL_PORT=$PSQL_PORT'\\n'PSQL_DBNAME=$PSQL_DBNAME'\\n'PSQL_ADMIN=$PSQL_ADMIN'\\n'MONGO_HOST=$MONGO_HOST'\\n'MONGO_USER=$MONGO_USER'\\n'MONGO_PASSWORD=$MONGO_PASSWORD'\\n'MONGO_DATABASE=$MONGO_DATABASE" > /home/jarservice/creds"
+sudo chown jarservice:jarservice /home/jarservice/creds
 #Перезаливаем дескриптор сервиса на ВМ для деплоя
 sudo cp -rf sausage-store-backend.service /etc/systemd/system/sausage-store-backend.service
 sudo rm -f /home/jarservice/sausage-store.jar||true
