@@ -91,9 +91,9 @@ deploy-backend-prod:
        export "PSQL_DBNAME=${PSQL_DBNAME}";
        export "PSQL_ADMIN=${PSQL_ADMIN}";
        export "MONGO_HOST=${MONGO_HOST}";
-       export "MONGO_USER=${MONGO_USER}"
+       export "MONGO_USER=${MONGO_USER}";
        export "MONGO_PASSWORD=${MONGO_PASSWORD}";
-       export "MONGO_DATABASE=${MONGO_DATABASE}"
+       export "MONGO_DATABASE=${MONGO_DATABASE}";
        setsid /bin/bash -s " < ./backend/deploy.sh
 
 send-notification:
