@@ -1,32 +1,34 @@
 include:
   - template: Security/SAST.gitlab-ci.yml
-
-cache:
-  key: $CI_COMMIT_REF_SLUG-frontend
-  paths:
-    - frontend/dist/frontend
+  - project: 'templates/ci'
+    file: 'DockerInDockerTemplate.yml'
   
 variables:
   VERSION: 1.0.${CI_PIPELINE_ID}
   SAST_EXCLUDED_ANALYZERS: "spotbugs-sast"
   
 stages:
-  - build
+  - build-docker
   - test
-  - release
-  - deploy-production
-  - notify
+  - release-docker
+  - deploy-docker
 
-build-frontend-job: # задача с именем build-code-job
-  stage: build   # этап build
+build-frontend-docker:
+  stage: build-docker
+  image: docker:20.10.12-dind-rootless
+  before_script:
+    - until docker info; do sleep 1; done
+    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - cd frontend
-    - npm install karma@6.3.20
-    - npm install # загрузка всех сторонних зависимостей
-    - npm run build
-  rules:
-    - changes:
-        - frontend/*
+    - >
+      docker build
+      --build-arg VERSION=$VERSION
+      --tag $CI_REGISTRY_IMAGE/sausage-frontend:$CI_PIPELINE_ID
+      .
+    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:$CI_PIPELINE_ID
+
 
 sonarqube-frontend-sast:
   stage: test
@@ -41,44 +43,38 @@ sonarqube-frontend-sast:
       -Dsonar.host.url=${SONARQUBE_URL}
       -Dsonar.login=${SONAR_LOGIN}
 
-upload-frontend-release:
-  stage: release
+upload-frontend-latest:
+  variables:
+    GIT_STRATEGY: none
+  image: docker:20.10.12-dind-rootless
+  stage: release-docker
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - tar czvf sausage-store-${VERSION}.tar.gz frontend/dist/frontend
-    - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL_FRONTEND}/sausage-store-front/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz
-  rules:
-    - changes:
-        - frontend/*
+    - docker pull $CI_REGISTRY_IMAGE/sausage-frontend:$CI_PIPELINE_ID
+    # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
+    - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:$CI_PIPELINE_ID $CI_REGISTRY_IMAGE/sausage-frontend:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:latest
+
         
 deploy-frontend-prod:
-  stage: deploy-production
+  stage: deploy-docker
+  image: alpine:3.15.0
   when: manual
-  environment:
-    name: frontend-production/$CI_COMMIT_REF_SLUG
   before_script:
     #устанавливаем ssh-agent для удобства аутентификации по ssh
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apk add openssh-client bash
     - eval $(ssh-agent -s)
-    #сохраняем сгенеренный ранее приватный ключ для раннера
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 600 ~/.ssh
+    - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - scp ./frontend/sausage-store-frontend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-frontend.service
     - ssh ${DEV_USER}@${DEV_HOST}
-      "export "CURRENT_VERSION=${VERSION}";
-      export "VERSION=${VERSION}";
-      export "DEV_HOST=${DEV_HOST}";
-      export "NEXUS_REPO_URL=${NEXUS_REPO_URL_FRONTEND}";
-      export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
-      export 'NEXUS_REPO_PASS=${NEXUS_REPO_PASS}';
-      setsid /bin/bash -s " < ./frontend/deploy.sh
-    
-send-notification:
-  stage: notify
-  script:
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"text\": \"Вышла новая версия фронтенда сосисочной — \'${VERSION}\'.
-       Скачать можно по ссылке — <\'${NEXUS_REPO_URL_FRONTEND}\'sausage-store-front/sausage-store/\'${VERSION}\'/sausage-store-\'${VERSION}\'.tar.gz|Link to frontend> .\"}'
-       https://hooks.slack.com/services/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"
+      "export "VERSION=${VERSION}";
+       export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
+       export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
+       export "CI_REGISTRY=${CI_REGISTRY}";
+      /bin/bash -s " < ./frontend/frontend_deploy.sh
