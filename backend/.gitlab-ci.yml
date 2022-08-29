@@ -98,11 +98,9 @@ deploy-backend:
   script:
     - ssh ${DEV_USER}@${DEV_HOST}
      " export "VERSION=${VERSION}";
-       export "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}";
-       export "SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}";
-       export "SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}";
-       export "SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
        export "CI_REGISTRY=${CI_REGISTRY}";
+       export "VAULT_HOST=${VAULT_HOST}";
+       export "VAULT_TOKEN=${VAULT_TOKEN}";
        /bin/bash -s " < ./backend/backend_deploy.sh
