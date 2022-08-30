@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+  backend:
+    image: gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-backend:latest
+    container_name: sausage-store-backend
+    environment:
+      SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
+      VAULT_TOKEN: ${VAULT_TOKEN}
+      VAULT_HOST: ${VAULT_HOST}
+    networks:
+      - sausage-store
+  backend-report:
+    image: gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-backend-report:latest
+    container_name: sausage-store-backend-report
+    environment:
+      VAULT_TOKEN: ${VAULT_TOKEN}
+      VAULT_HOST: ${VAULT_HOST}
+    networks:
+      - sausage-store
+  frontend:
+    image: gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-frontend:latest
+    container_name: sausage-store-frontend
+    ports:
+      - "80:80"
+    networks:
+      - sausage-store
+  vault:
+    image: vault
+    container_name: vault
+    environment:
+      VAULT_TOKEN: ${VAULT_TOKEN}
+      VAULT_SERVER: "http://127.0.0.1:8200"
+      VAULT_ADDR: "http://127.0.0.1:8200"
+    networks:
+      - sausage-store
+
+networks:
+  sausage-store:
