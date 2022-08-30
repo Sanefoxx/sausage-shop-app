@@ -18,6 +18,7 @@ services:
     environment:
       VAULT_TOKEN: ${VAULT_TOKEN}
       VAULT_HOST: ${VAULT_HOST}
+      VERSION: ${VERSION}
     networks:
       - sausage-store
   frontend:
