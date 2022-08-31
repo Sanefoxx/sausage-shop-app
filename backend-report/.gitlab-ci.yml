@@ -39,11 +39,11 @@ spotbugs-sast:
     reports:
       sast: gl-sast-report.json
 
-sonarqube-backend-sast:
+sonarqube-backend-report-sast:
   stage: test
   image: maven:3.8-openjdk-16
   script:
-    - cd backend
+    - cd backend-report
     - >
       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
       -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACKEND_REPORT}

@@ -4,15 +4,11 @@ cat > .env <<EOF
 VAULT_HOST=${VAULT_HOST}
 VAULT_TOKEN=${VAULT_TOKEN}
 EOF
+sudo cp -rf docker-compose.yml /home/jarservice/docker_compose/docker-compose.yml
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-docker network create -d bridge sausage_network || true
-docker pull gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-backend:latest
-docker stop backend || true
-docker rm backend || true
+docker stop sausage-store-backend || true
+docker rm sausage-store-backend || true
+#test
 set -e
-docker run -d --name backend \
-    --network=sausage_network \
-    --restart always \
-    --pull always \
-    --env-file .env \
-    gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-backend:latest
+cd /home/jarservice/docker_compose/
+docker-compose up -d
