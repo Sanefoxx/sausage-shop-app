@@ -18,7 +18,7 @@ ExecStart=/usr/bin/java \
 --spring.datasource.username=${PSQL_USER} \
 --spring.datasource.password=${PSQL_PASSWORD} \
 --spring.data.mongodb.uri=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true
-SuccessExitStatus=143
+#SuccessExitStatus=143
 
 [Install]
 WantedBy=multi-user.target
