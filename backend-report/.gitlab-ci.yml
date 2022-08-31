@@ -53,7 +53,7 @@ sonarqube-backend-report-sast:
       -Dsonar.host.url=${SONARQUBE_URL}
       -Dsonar.login=${SONAR_LOGIN}
 
-upload-backend-latest:
+upload-backend-report-latest:
   variables:
     GIT_STRATEGY: none
   image: docker:20.10.12-dind-rootless
@@ -67,7 +67,7 @@ upload-backend-latest:
     - docker tag $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend-report:latest
     - docker push $CI_REGISTRY_IMAGE/sausage-backend-report:latest
 
-deploy-backend:
+deploy-backend-report:
   stage: deploy-docker
   image: alpine:3.15.0
   when: manual
