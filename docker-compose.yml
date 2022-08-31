@@ -29,7 +29,7 @@ services:
       - sausage-store
   vault:
     image: vault
-    container_name: vault
+    container_name: sausage-store-vault
     environment:
       VAULT_TOKEN: ${VAULT_TOKEN}
       VAULT_SERVER: "http://127.0.0.1:8200"

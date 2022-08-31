@@ -46,6 +46,7 @@ sonarqube-backend-report-sast:
     - cd backend-report
     - >
       mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
+      -DskipTests
       -Dsonar.projectKey=${SONAR_PROJECT_KEY_BACKEND_REPORT}
       -Dsonar.projectName=${SONAR_PROJECT_NAME_BACKEND_REPORT}
       -Dsonar.host.url=${SONARQUBE_URL}
