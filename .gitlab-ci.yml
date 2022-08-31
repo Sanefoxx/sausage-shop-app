@@ -32,7 +32,7 @@ backend-report:
     changes:
       - backend-report/**/*
 
-deploy-all:
+deploy-vault:
   stage: deploy-vault
   image: alpine:3.15.0
   when: manual
@@ -54,4 +54,4 @@ deploy-all:
       export "PSQL_DATASRC=${PSQL_DATASRC}";
       export "TEST_DATASRC_PSQL_USER=${TEST_DATASRC_PSQL_USER}";
       export "TEST_DATASRC_PSQL_PASS=${TEST_DATASRC_PSQL_PASS}";
-      /bin/bash -s " < ./devops/deploy.sh
+      /bin/bash -s " < vault_deploy.sh
