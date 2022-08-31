@@ -7,4 +7,4 @@ docker rm sausage-store-frontend || true
 #test2
 set -e
 cd /home/jarservice/docker_compose/
-docker-compose up -d
+docker-compose up -d --no-deps --build sausage-store-frontend

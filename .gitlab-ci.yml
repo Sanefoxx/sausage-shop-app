@@ -1,5 +1,6 @@
 stages:
   - module-pipelines
+  - deploy-vault
 
 frontend:
   stage: module-pipelines
@@ -30,3 +31,27 @@ backend-report:
   only:
     changes:
       - backend-report/**/*
+
+deploy-all:
+  stage: deploy-vault
+  image: alpine:3.15.0
+  when: manual
+  before_script:
+    - apk add openssh-client bash
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose.yml
+    - ssh ${DEV_USER}@${DEV_HOST}
+      "export "VERSION=${VERSION}";
+      export "VAULT_TOKEN=${VAULT_TOKEN}"
+      export "MONGODB_URL=${MONGODB_URL}"
+      export "DATASRC_PASS_PSQL=${DATASRC_PASS_PSQL}";
+      export "PSQL_DATASRC=${PSQL_DATASRC}";
+      export "TEST_DATASRC_PSQL_USER=${TEST_DATASRC_PSQL_USER}";
+      export "TEST_DATASRC_PSQL_PASS=${TEST_DATASRC_PSQL_PASS}";
+      /bin/bash -s " < ./devops/deploy.sh

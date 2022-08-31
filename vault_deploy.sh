@@ -5,7 +5,7 @@ cat <<EOF | docker exec -i vault ash
 
   vault secrets enable -path=secret kv
 
-  vault kv put secret/sausage-store spring.datasource.password="${SPRING_DATASOURCE_PASSWORD}" \
+  vault kv put secret/sausage-store spring.datasource.password="${DATASRC_PASS_PSQL}" \
    spring.data.mongodb.uri="${MONGODB_URL}" \
    spring.datasource.url="${PSQL_DATASRC}"
 
