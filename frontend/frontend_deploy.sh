@@ -2,9 +2,9 @@
 set +e
 sudo cp -rf docker-compose.yml /home/jarservice/docker_compose/docker-compose.yml
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-docker stop sausage-store-frontend || true
-docker rm sausage-store-frontend || true
+docker stop sausage-frontend || true
+docker rm sausage-frontend || true
 #test2
 set -e
 cd /home/jarservice/docker_compose/
-docker-compose up -d --no-deps --build sausage-store-frontend
+docker-compose up -d --no-deps --build frontend

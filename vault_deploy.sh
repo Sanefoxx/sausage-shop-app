@@ -1,13 +1,9 @@
 #!/bin/sh
 set -e
-echo "111111"
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-echo "222222"
 docker-compose stop vault
 docker rm vault || true
-echo "33333"
 docker-compose up -d vault
-echo "44444444"
 cat <<EOF | docker exec -i vault ash
   sleep 10;
   vault login ${VAULT_TOKEN}
