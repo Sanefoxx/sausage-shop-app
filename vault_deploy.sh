@@ -6,7 +6,7 @@ echo "222222"
 docker-compose stop vault
 echo "33333"
 docker-compose up -d vault
-echo "4444444"
+echo "44444444"
 cat <<EOF | docker exec -i vault ash
   sleep 10;
   vault login ${VAULT_TOKEN}
