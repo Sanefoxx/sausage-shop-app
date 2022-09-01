@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-docker-compose stop sausage-store-vault
+#docker-compose stop sausage-store-vault
 docker-compose up -d sausage-store-vault
 cat <<EOF | docker exec -i sausage-store-vault ash
   sleep 10;
