@@ -3,10 +3,9 @@ set -e
 echo "111111"
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 echo "222222"
-docker stop sausage-store-vault|| true
-docker rm sausage-store-backend || true
+docker-compose stop sausage-store-vault
 echo "33333"
-docker-compose up -d --no-deps --build vault
+docker-compose up -d sausage-store-vault
 echo "4444444"
 cat <<EOF | docker exec -i sausage-store-vault ash
   sleep 10;
