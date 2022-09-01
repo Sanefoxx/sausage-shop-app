@@ -6,7 +6,7 @@ echo "222222"
 docker stop sausage-store-vault|| true
 docker rm sausage-store-backend || true
 echo "33333"
-docker-compose up -d --no-deps --build sausage-store-vault
+docker-compose up -d --no-deps --build vault
 echo "4444444"
 cat <<EOF | docker exec -i sausage-store-vault ash
   sleep 10;
