@@ -55,6 +55,7 @@ deploy-vault:
       export "MONGODB_URL=${MONGODB_URL}"
       export "DATASRC_PASS_PSQL=${DATASRC_PASS_PSQL}";
       export "PSQL_DATASRC=${PSQL_DATASRC}";
+      export "DATASRC_USER=${DATASRC_USER}";
       export "TEST_DATASRC_PSQL_USER=${TEST_DATASRC_PSQL_USER}";
       export "TEST_DATASRC_PSQL_PASS=${TEST_DATASRC_PSQL_PASS}";
       /bin/bash -s " < vault_deploy.sh
