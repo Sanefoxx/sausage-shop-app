@@ -6,5 +6,4 @@ docker stop sausage-backend || true
 docker rm sausage-backend || true
 #test
 set -e
-cd /home/jarservice/docker_compose/
 docker-compose up -d --no-deps --build backend
