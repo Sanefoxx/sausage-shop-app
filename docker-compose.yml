@@ -31,9 +31,14 @@ services:
     image: vault
     container_name: vault
     environment:
-      VAULT_TOKEN: ${VAULT_TOKEN}
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_TOKEN}
       VAULT_SERVER: "http://127.0.0.1:8200"
       VAULT_ADDR: "http://127.0.0.1:8200"
+      DATASRC_PASS_PSQL: ${DATASRC_PASS_PSQL}
+      MONGODB_URL: ${MONGODB_URL}
+      PSQL_DATASRC: ${PSQL_DATASRC}
+      TEST_DATASRC_PSQL_USER: ${TEST_DATASRC_PSQL_USER}
+      TEST_DATASRC_PSQL_PASS: ${TEST_DATASRC_PSQL_PASS}
     networks:
       - sausage-store
 
