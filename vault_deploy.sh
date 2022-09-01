@@ -12,10 +12,9 @@ cat <<EOF | docker exec -i vault ash
 
   vault kv put secret/sausage-store spring.datasource.password="${DATASRC_PASS_PSQL}" \
    spring.datasource.username="${DATASRC_USER}" \
-   spring.datasource.url="${PSQL_DATASRC}"
+   spring.datasource.url="${PSQL_DATASRC}" \
+   spring.data.mongodb.uri="${MONGODB_URL}"
 
   vault kv put secret/sausage-store-test spring.datasource.username="${TEST_DATASRC_PSQL_USER}" \
                                          spring.datasource.password="${TEST_DATASRC_PSQL_PASS}"
 EOF
-
-#spring.data.mongodb.uri="${MONGODB_URL}" \
