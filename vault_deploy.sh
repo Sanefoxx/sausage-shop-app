@@ -4,6 +4,7 @@ echo "111111"
 docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
 echo "222222"
 docker-compose stop vault
+docker rm vault || true
 echo "33333"
 docker-compose up -d vault
 echo "44444444"
@@ -17,6 +18,6 @@ cat <<EOF | docker exec -i vault ash
    spring.data.mongodb.uri="${MONGODB_URL}" \
    spring.datasource.url="${PSQL_DATASRC}"
 
-  vault kv put secret/sausage-store-test spring.datasource.username="${TEST_DATASRC_PSQL_USER}"
+  vault kv put secret/sausage-store-test spring.datasource.username="${TEST_DATASRC_PSQL_USER}" \
                                          spring.datasource.password="${TEST_DATASRC_PSQL_PASS}"
 EOF
