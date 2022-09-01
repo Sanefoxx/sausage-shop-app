@@ -39,6 +39,8 @@ services:
       PSQL_DATASRC: ${PSQL_DATASRC}
       TEST_DATASRC_PSQL_USER: ${TEST_DATASRC_PSQL_USER}
       TEST_DATASRC_PSQL_PASS: ${TEST_DATASRC_PSQL_PASS}
+    ports:
+      - "8200:8200"
     networks:
       - sausage-store
 
