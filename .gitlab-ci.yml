@@ -52,6 +52,8 @@ deploy-vault:
       export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
       export "CI_REGISTRY=${CI_REGISTRY}";
       export "VAULT_TOKEN=${VAULT_TOKEN}"
+      export "VAULT_SERVER=${VAULT_SERVER}"
+      export "VAULT_ADDR=${VAULT_ADDR}"
       export "MONGODB_URL=${MONGODB_URL}"
       export "DATASRC_PASS_PSQL=${DATASRC_PASS_PSQL}";
       export "PSQL_DATASRC=${PSQL_DATASRC}";
