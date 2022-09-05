@@ -87,7 +87,7 @@ deploy-backend:
   image: alpine:3.15.0
   when: manual
   before_script:
-    #устанавливаем ssh-agent для удобства аутентификации по ssh test1
+    #устанавливаем ssh-agent для удобства аутентификации по ssh test6
     - apk add openssh-client bash
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
@@ -103,4 +103,5 @@ deploy-backend:
        export "CI_REGISTRY=${CI_REGISTRY}";
        export "VAULT_HOST=${VAULT_HOST}";
        export "VAULT_TOKEN=${VAULT_TOKEN}";
+       export "NODE_SCALING=${NODE_SCALING}";
        /bin/bash -s " < ./backend/backend_deploy.sh
