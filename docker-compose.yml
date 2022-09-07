@@ -1,8 +1,14 @@
-version: "3.3"
+version: "3.4"
 services:
-  backend:
+  backend-blue:
     image: gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-backend:latest
     restart: always
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6
     environment:
       SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
       VAULT_TOKEN: ${VAULT_TOKEN}
@@ -12,6 +18,26 @@ services:
       VIRTUAL_HOST: sausage-store
     networks:
       - sausage-store
+  
+  backend-green:
+    image: gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-backend:latest
+    restart: always
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 6
+    environment:
+      SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
+      VAULT_TOKEN: ${VAULT_TOKEN}
+      VAULT_HOST: ${VAULT_HOST}
+      REPORT_PATH: ${REPORT_PATH}
+      LOG_PATH: ${LOG_PATH}
+      VIRTUAL_HOST: sausage-store
+    networks:
+      - sausage-store
+  
   backend-report:
     image: gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-backend-report:latest
     container_name: sausage-backend-report
@@ -21,6 +47,7 @@ services:
       VAULT_HOST: ${VAULT_HOST}
     networks:
       - sausage-store
+  
   frontend:
     image: gitlab.praktikum-services.ru:5050/a.lisitsin/sausage-store/sausage-frontend:latest
     restart: always
@@ -33,6 +60,7 @@ services:
       - "80:80"
     networks:
       - sausage-store
+  
   vault:
     image: vault
     container_name: vault
