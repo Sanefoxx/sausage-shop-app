@@ -5,7 +5,7 @@ COPY . .
 RUN npm install karma@6.3.20 && npm install && npm run build
 
 # release check3
-FROM nginxproxy/nginx-proxy
+FROM nginx:latest
 COPY --from=build /usr/src/app/dist/frontend /usr/share/nginx/html
 COPY nginx.tmpl /app/nginx.tmpl
-EXPOSE 80
+EXPOSE 8080
