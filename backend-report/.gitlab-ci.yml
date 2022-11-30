@@ -73,7 +73,7 @@ deploy-backend-report:
   image: alpine:3.15.0
   when: manual
   before_script:
-    #устанавливаем ssh-agent для удобства аутентификации по ssh test7
+    #устанавливаем ssh-agent для удобства аутентификации по ssh test8
     - apk add openssh-client bash
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
