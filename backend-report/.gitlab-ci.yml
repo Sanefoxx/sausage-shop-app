@@ -95,3 +95,4 @@ deploy-argocd-infrastructure:
   stage: deploy-argocd
   trigger:
     project: a.lisitsin/infrastructure
+    branch: 10-argocd
