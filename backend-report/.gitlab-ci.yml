@@ -91,9 +91,7 @@ deploy-backend-report:
        export "VAULT_TOKEN=${VAULT_TOKEN}";
        /bin/bash -s " < ./backend-report/backend_report_deploy.sh
 
-deploy-argocd:
+deploy-argocd-infrastructure:
   stage: deploy-argocd
-  image: argoproj/argocd:v2.5.2
-  when: manual
-  script:
-    - argocd --grpc-web --auth-token $ARGO_TOKEN --server $ARGO_URL app set $ARGO_APPLICATION_NAME -p backend-report.image.tag=$VERSION
+  trigger:
+    project: a.lisitsin/infrastructure
