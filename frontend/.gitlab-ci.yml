@@ -12,6 +12,7 @@ stages:
   - test
   - release-docker
   - deploy-docker
+  - deploy-argocd
 
 build-frontend-docker:
   stage: build-docker
@@ -78,3 +79,10 @@ deploy-frontend:
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
        export "CI_REGISTRY=${CI_REGISTRY}";
       /bin/bash -s " < ./frontend/frontend_deploy.sh
+
+deploy-argocd:
+  stage: deploy-argocd
+  image: argoproj/argocd:v2.5.2
+  when: manual
+  script:
+    - argocd --grpc-web --auth-token $ARGO_TOKEN --server $ARGO_URL app set $ARGO_APPLICATION_NAME -p frontend.image.tag=$VERSION
