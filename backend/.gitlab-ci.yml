@@ -6,7 +6,7 @@ include:
 variables:
   VERSION: 1.0.${CI_PIPELINE_ID}
   MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
-  JAVA_OPTS: -XX:MaxRAMPercentage=90 # для того, чтобы Maven не съел всю свободную оперативку
+  JAVA_OPTS: -XX:MaxRAMPercentage=90 # для того, чтобы Maven не съел всю свободную оперативку test
   SAST_EXCLUDED_ANALYZERS: "eslint-sast,nodejs-scan-sast"
   
 stages:
@@ -15,6 +15,7 @@ stages:
   - test
   - docker-release
   - deploy-docker
+  - deploy-argocd
 
 build:
   stage: build   # этап build
@@ -105,3 +106,9 @@ deploy-backend:
        export "VAULT_TOKEN=${VAULT_TOKEN}";
        export "NODE_SCALING=${NODE_SCALING}";
        /bin/bash -s " < ./backend/backend_deploy.sh
+
+deploy-argocd-infrastructure:
+  stage: deploy-argocd
+  trigger:
+    project: a.lisitsin/infrastructure
+    branch: 10-argocd
